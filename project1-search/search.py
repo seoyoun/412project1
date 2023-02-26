@@ -127,21 +127,53 @@ def depthFirstSearch(problem):
                 appendedLength = currentPositionInformation[2] + length
                 stack.push((coordinate, appendedDirection, appendedLength))
 
-        
-            
-
-
-    
-
-
-    
-    
+      
     
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    from util import Queue
+    from game import Directions
+
+
+    ## code is adapted from the graph_search psuedocode from Project 1 instructions
+
+    startState = problem.getStartState()
+
+    ## initializing the priority queue
+    frontier = Queue()
+    frontier.push((startState, []))
+    
+    ## initializing a dictionary of the expanded states
+    expanded = {}
+    
+    ## since this is a priority queue, will pop the value of the smallest depth
+    while not frontier.isEmpty() :
+        nodeCoordinate, coordinatePath = frontier.pop()
+
+        if problem.isGoalState(nodeCoordinate):
+            return coordinatePath
+        if nodeCoordinate not in expanded:
+            expanded.append(nodeCoordinate)
+            
+            ## getting the list of successors and appending it to the queue
+            successors = problem.getSuccessors(nodeCoordinate)
+
+            for coordinate, direction, length in successors:
+                updatedDirectionPath = coordinatePath
+                if direction is 'North':
+                    updatedDirectionPath.append(Directions.NORTH)
+                elif direction is 'South':
+                    updatedDirectionPath.append(Directions.SOUTH)
+                elif direction is 'East':
+                    updatedDirectionPath.append(Directions.EAST)
+                elif direction is 'West':
+                    updatedDirectionPath.append(Directions.WEST)
+                frontier.push((coordinate, updatedDirectionPath))
+
+    
+
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
