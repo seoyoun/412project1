@@ -146,7 +146,7 @@ def breadthFirstSearch(problem):
     frontier.push((startState, []))
     
     ## initializing a dictionary of the expanded states
-    expanded = {}
+    expanded = []
     
     ## since this is a priority queue, will pop the value of the smallest depth
     while not frontier.isEmpty() :
@@ -154,6 +154,7 @@ def breadthFirstSearch(problem):
 
         if problem.isGoalState(nodeCoordinate):
             return coordinatePath
+        
         if nodeCoordinate not in expanded:
             expanded.append(nodeCoordinate)
             
@@ -161,18 +162,9 @@ def breadthFirstSearch(problem):
             successors = problem.getSuccessors(nodeCoordinate)
 
             for coordinate, direction, length in successors:
-                updatedDirectionPath = coordinatePath
-                if direction is 'North':
-                    updatedDirectionPath.append(Directions.NORTH)
-                elif direction is 'South':
-                    updatedDirectionPath.append(Directions.SOUTH)
-                elif direction is 'East':
-                    updatedDirectionPath.append(Directions.EAST)
-                elif direction is 'West':
-                    updatedDirectionPath.append(Directions.WEST)
-                frontier.push((coordinate, updatedDirectionPath))
+                frontier.push((coordinate, coordinatePath + [direction]))
 
-    
+    return []
 
 
 def uniformCostSearch(problem):
