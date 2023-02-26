@@ -87,56 +87,29 @@ def depthFirstSearch(problem):
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
     "*** YOUR CODE HERE ***"
-    #util.raiseNotDefined()
-    print("Start:", problem.getStartState())
-    print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
-    print("Start's successors:", problem.getSuccessors(problem.getStartState()))
 
-    ## keeping track of whether a position is visited or not 
-    positionsVisited = {}
-    ## add ((4,5), [n,s,w])
+
+    
     from util import Stack
-    
-    ## stack to push and pop nodes that we need to traverse at the moment
-    stack = Stack()
-    
-    ## get the starting position
-    startingPosition = problem.getStartState()
 
-    ## push it into the stack
-    stack.push((startingPosition, [], 0))
+    frontier = Stack()
+    expanded = []
 
-    while not stack.isEmpty: 
-        currentPositionInformation = stack.pop()
+    startState = problem.getStartState()
+    frontier.push((startState, []))
 
-        currentPosition = currentPositionInformation[0]
-        
-        if not currentPosition in positionsVisited :
-            ## if we have not visted the position we just popped, we
-            ## add it to the list of positions
+    while not frontier.isEmpty():
+        currState, pathToNode = frontier.pop()
+
+        if problem.isGoalState(currState):
+            return pathToNode
             
-            positionsVisited[currentPosition] = (currentPositionInformation[1], currentPositionInformation[2])
-        
-        ## getting the successors of the current position, verify if they
-        ## have not been visited, then add to the node
-        successors = problem.getSuccessors(currentPosition)
+        if currState not in expanded:
+            expanded.append(currState)
 
-        for (coordinate, direction, length) in successors: 
-            if coordinate not in positionsVisited: 
-                appendedDirection = currentPositionInformation[1].append(direction)
-                appendedLength = currentPositionInformation[2] + length
-                stack.push((coordinate, appendedDirection, appendedLength))
-
-        
-            
-
-
-    
-
-
-    
-    
-    
+            for successor, action, stepCost in problem.getSuccessors(currState):
+                frontier.push((successor, pathToNode + [action]))
+    return []
 
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
