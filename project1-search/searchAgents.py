@@ -443,7 +443,6 @@ def cornersHeuristic(state, problem):
         distanceToGoal += minCornerToCorner
         remainingCorners.remove(remainingClosestCorner[0])
     
-
     return distanceToGoal
 
 
@@ -540,7 +539,68 @@ def foodHeuristic(state, problem):
     """
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
-    return 0
+    possibleX, possibleY = position 
+    foodGridList = foodGrid.copy().asList()
+    
+    ## if goal state, return 0
+    if problem.isGoalState(state):
+        return 0
+
+    distanceToGoal = 0
+
+
+    ## NEW (SIMPLIER) APPROACH - finding the distance from state to the farthest point (using the provided mazeDistance formula)
+    ## since this will give us the path to the farthest point, which can be the "goal state"
+    for foodCordinate in foodGridList:
+        distanceToFood = mazeDistance(position, foodCordinate, problem.startingGameState)
+      
+        if distanceToFood > distanceToGoal:
+            distanceToGoal = distanceToFood
+    
+    return distanceToGoal
+
+
+    ## Original approach: Similar to Q6, thsi finds the distance to the nearest point, and
+    ## then finds the distance to the nearest food point from there to generate a path 
+    ## that connects through all the food points. Both the mazeDistance formula and the 
+    ## Manhattan approach was used. This approach did not pass the admissability test, which is why
+    ## this approach was not ultimately used.
+
+    """
+    ## finding the closest food item to list and finding the distance to food item
+    closestFoodItem = []
+
+    for foodCoordinate in foodGridList:
+        foodCoordinateX, foodCoordinateY = foodCoordinate
+        #distanceToFood = abs(possibleX - foodCoordinateX) + abs(possibleY - foodCoordinateY)
+        distanceToFood = mazeDistance(position, foodCoordinate, problem.startingGameState)
+        if distanceToFood < distanceToGoal: 
+            distanceToGoal = distanceToFood
+            closestFoodItem = [foodCoordinate]
+
+    foodGridList.remove(closestFoodItem[0])
+
+    ## iterating the distance from the closest food item to the next closest food item
+    ## and calculating the distance to the food item 
+    while len(foodGridList) != 0:
+        minFoodToFood = 999999
+        for remainingFoodItem in foodGridList:
+            closestFoodX, closestFoodY = closestFoodItem[0]
+            remainingFoodX, remainingFoodY = remainingFoodItem
+            #distanceFoodToFood = abs(closestFoodX - remainingFoodX) + abs(closestFoodY - remainingFoodY)
+            distanceFoodToFood = mazeDistance(closestFoodItem[0], remainingFoodItem, problem.startingGameState)
+            if distanceFoodToFood < minFoodToFood:
+                minFoodToFood = distanceFoodToFood
+                closestFoodItem = [remainingFoodItem]
+        
+        ## adding the shortest food to food distance to the overall distance to goal
+        ## and removing that food item from the food list for further calculation
+        distanceToGoal += minFoodToFood
+        foodGridList.remove(closestFoodItem[0])
+    
+    return distanceToGoal
+    """
+
 
 class ClosestDotSearchAgent(SearchAgent):
     "Search for all food using a sequence of searches"
