@@ -193,6 +193,8 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     frontier = PriorityQueue()
 
     startState = problem.getStartState()
+    print(startState)
+    print("------")
     
     frontier.push((startState, []), 0)
 
@@ -212,7 +214,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                 newPathToNode = pathToNode + [action]
                 totalCost = problem.getCostOfActions(pathToNode + [action]) + heuristic(successor, problem)
                 frontier.push((successor, newPathToNode), totalCost)
-    
+            
     return []
 
     

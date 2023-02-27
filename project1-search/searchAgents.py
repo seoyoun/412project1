@@ -307,7 +307,7 @@ class CornersProblem(search.SearchProblem):
         
         currPosition = state[0]
         expandedCorners = state[1]
-
+        
         if len(expandedCorners) == 4:#expanded all corners
             return True 
         
@@ -396,7 +396,57 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
-    return 0 # Default to trivial solution
+    possibleX, possibleY = state[0]
+    expandedCorners = state[1]
+    
+
+    ## if goal state, return 0 
+    if problem.isGoalState(state):
+        return 0
+    
+    distanceToGoal = 999999
+    remainingCorners = []
+    closestCorner = []
+
+    for allCorner in corners: 
+        if allCorner not in expandedCorners:
+            remainingCorners.append(allCorner)
+
+
+    ## going through every corner to find the shortest distance from state point to corner
+    for remainingCorner in remainingCorners:
+        remainingCornerX, remainingCornerY = remainingCorner
+        distanceToCorner = abs(possibleX-remainingCornerX) + abs(possibleY-remainingCornerY)
+
+        if distanceToCorner < distanceToGoal:
+            distanceToGoal = distanceToCorner
+            closestCorner = [remainingCorner]
+
+
+    remainingCorners.remove(closestCorner[0])
+    remainingClosestCorner = closestCorner
+    
+    ## iterating the distance from closest corner to the other remaining corners
+    while len(remainingCorners) != 0:
+        minCornerToCorner = 999999
+        for otherCorner in remainingCorners:
+            closestCornerX, closestCornerY = remainingClosestCorner[0]
+            otherCornerX, otherCornerY = otherCorner
+            distanceCornerToCorner = abs(otherCornerX - closestCornerX) + abs(otherCornerY - closestCornerY)
+            
+            if distanceCornerToCorner < minCornerToCorner:
+                minCornerToCorner = distanceCornerToCorner
+                remainingClosestCorner = [otherCorner]
+        
+        ## adding the shortest corner to corner distance to the overall distance to goal
+        ## and removing that corner from the remaining corners list for further calculation
+        distanceToGoal += minCornerToCorner
+        remainingCorners.remove(remainingClosestCorner[0])
+    
+
+    return distanceToGoal
+
+
 
 class AStarCornersAgent(SearchAgent):
     "A SearchAgent for FoodSearchProblem using A* and your foodHeuristic"
